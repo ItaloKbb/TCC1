@@ -1,0 +1,164 @@
+%% Exemplo de utilizacao do estilo de formatacao normas-utf-tex (http://normas-utf-tex.sourceforge.net)
+%% Autores: Hugo Vieira Neto (hvieir@utfpr.edu.br)
+%%          Diogo Rosa Kuiaski (diogo.kuiaski@gmail.com)
+%% Colaboradores:
+%%          CÃ©zar M. Vargas Benitez <cesarvargasb@gmail.com>
+%%          Marcos Talau <talau@users.sourceforge.net>
+
+
+\documentclass[openright]{normas-utf-tex} %openright = o capitulo comeca sempre em paginas impares
+%\documentclass[oneside]{normas-utf-tex} %oneside = para dissertacoes com numero de paginas menor que 100 (apenas frente da folha) 
+
+\usepackage[breaklinks=true]{hyperref}
+\usepackage[a-3b]{pdfx}   % for PDF/A-3b
+
+\usepackage[alf,abnt-emphasize=bf,bibjustif,recuo=0cm, abnt-etal-cite=3, abnt-etal-list=99]{abntcite} %configuracao correta das referencias bibliograficas.
+
+\usepackage[brazil]{babel} % pacote portugues brasileiro
+\usepackage[utf8]{inputenc} % pacote para acentuacao direta
+\usepackage[T1]{fontenc} % pacote para  não zicar a acentuação quando copiar o texto do pdf
+\usepackage{amsmath,amsfonts,amssymb} % pacote matematico
+\usepackage{graphicx} % pacote grafico
+%\usepackage{times} % fonte times
+\usepackage{quoting}
+\usepackage[none]{hyphenat}
+\usepackage{microtype}
+\usepackage[final]{pdfpages}
+
+%Corrige posicionamento de figuras e tabelas quando não tem texto na página
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
+%Podem utilizar GEOMETRY{...} para realizar pequenos ajustes das margens. Onde, left=esquerda, right=direita, top=superior, bottom=inferior. P.ex.:
+%\geometry{left=3.0cm,right=1.5cm,top=4cm,bottom=1cm} 
+
+% ---------- Preambulo ----------
+\instituicao{Universidade Tecnológica Federal do Paraná} % nome da instituicao
+\programa{Coordenadoria do Curso de Engenharia de Software} % nome do curso
+\area{} % Em branco
+
+\documento{Projeto de TCC 1} % [Projeto de TCC 1] ou [Trabalho de Conclusão de Curso] para TCC 2
+\nivel{Bacharelado}
+\titulacao{Bacharel}
+
+\titulo{\MakeUppercase{Plataforma de gerenciamento de Amostras Laboratoriais e análises no Contexto do NAPI Abelhas}}
+\title{Laboratory Sample and Analysis Management Platform in the Context of NAPI Abelhas}
+
+\autor{ITALO KAIQUE BERTINI BUENO} % autor do trabalho
+\cita{BUENO, Italo} % sobrenome (maiusculas), nome do autor do trabalho
+
+% AJUSTE: Palavras-chave alinhadas ao projeto (removido "...")
+\palavraschave{Apicultura. Meliponicultura. Rastreabilidade. Engenharia de Software. API REST. Docker.}
+\keywords{Apiculture. Meliponiculture. Traceability. Software Engineering. REST API. Docker.} % AJUSTE: Keywords
+
+\comentario{\UTFPRdocumentodata apresentado como requisito parcial para obtenção do título de \UTFPRtitulacaodata\ em Engenharia de Software da \ABNTinstituicaodata\ (UTFPR).}
+
+\orientador{Prof. André Roberto Ortonceli} % nome do orientador do trabalho
+%\orientador[Orientadora:]{Nome da Orientadora} % <- no caso de orientadora, usar esta sintaxe
+%\coorientador[Coorientadora:]{Nome da Coorientadora} % <- no caso de coorientadora, usar esta sintaxe
+%\coorientador[Coorientadores:]{Nome do Coorientador} % no caso de 2 coorientadores, usar esta sintaxe
+%\coorientadorb{Nome do Co-orientador 2}	% este comando inclui o nome do 2o coorientador
+
+\local{Dois Vizinhos} % cidade
+\data{\the\year} % ano automatico
+
+%Definir a licença do curso com as seguintes opções (deixar em branco quando não houver):
+\licenca{by}
+
+%---------- Inicio do Documento ----------
+\begin{document}
+
+\capa % geracao automatica da capa
+\folhaderosto % geracao automatica da folha de rosto
+%\includepdf{TermoAprovacao.pdf} Termo de Aprovação - o arquivo TermoAprovacao.pdf deve ser substituído pelo fornecido pelo Professor Responsável pelo TCC
+
+% dedicatória (opcional)
+\begin{dedicatoria}
+A mim mesmo.
+\end{dedicatoria}
+
+% agradecimentos (opcional)
+\begin{agradecimentos}
+Agradeço ao meu orientador e a todos os demais que me auxiliaram nesta jornada.
+Agradeço a minha familia
+Agradeço a meus amigos.
+Agradeço a minha namorada.
+\end{agradecimentos}
+
+% epigrafe (opcional)
+\begin{epigrafe}
+A vingança nunca é plena, mata a alma e a envenena.
+
+Madruga, Seu.
+\end{epigrafe}
+
+% AJUSTE: Resumo focado na PROPOSTA (TCC 1), e não no TCC 2
+\begin{resumo}
+A gestão de amostras na apicultura e meliponicultura brasileira sofre com a descentralização e o uso de métodos manuais, como planilhas, dificultando a rastreabilidade e o controle de qualidade. Este trabalho (Projeto de TCC 1) propõe a arquitetura de uma plataforma web robusta para o gerenciamento centralizado do ciclo de vida destas amostras. A solução é baseada em uma arquitetura de serviços desacoplados, compreendendo uma API RESTful (Node.js/Express) com validação (Zod), autenticação via Clerk, armazenamento de objetos (MinIO) e cache de alta performance (Redis), consumida por uma interface web (React). O projeto detalha a modelagem do banco de dados relacional (PostgreSQL/Prisma) e a prototipagem do ambiente de desenvolvimento (Docker), visando otimizar o controle laboratorial e garantir a integridade dos dados para análises futuras.
+\end{resumo}
+
+% AJUSTE: Abstract traduzido do Resumo acima
+\begin{abstract}
+Sample management in Brazilian apiculture and meliponiculture suffers from decentralization and the use of manual methods, such as spreadsheets, hindering traceability and quality control. This work (TCC 1 Project) proposes the architecture for a robust web platform for the centralized management of the lifecycle of these samples. The solution is based on a decoupled services architecture, comprising a RESTful API (Node.js/Express) with validation (Zod), authentication via Clerk, object storage (MinIO), and high-performance cache (Redis), consumed by a web interface (React). The project details the relational database modeling (PostgreSQL/Prisma) and the development environment prototyping (Docker), aiming to optimize laboratory control and ensure data integrity for future analysis.
+\end{abstract}
+
+% listas (opcionais, mas recomenda-se a partir de 5 elementos)
+\listadefiguras % geracao automatica da lista de figuras
+\listadetabelas % geracao automatica da lista de tabelas
+\listadequadros % geracao automatica da lista de quadros
+\listadesiglas % geracao automatica da lista de siglas
+\listadesimbolos % geracao automatica da lista de simbolos
+
+% sumario
+\sumario % geracao automatica do sumario
+
+
+%---------- Inicio do Texto ----------
+% recomenda-se a escrita de cada capitulo em um arquivo texto separado (exemplo: intro.tex, fund.tex, exper.tex, concl.tex, etc.) e a posterior inclusao dos mesmos no mestre do documento utilizando o comando \include{}, da seguinte forma:
+
+\include{Capitulos/Introducao}
+\include{Capitulos/Desenvolvimento}
+% \include{Capitulos/Recursos} % Não obrigatório porém, a critério do estudante/orientador pode ser adicionado
+% \include{Capitulos/Resultados} % Não obrigatório porém, a critério do estudante/orientador pode ser adicionado
+\include{Capitulos/Conclusoes}
+
+
+%---------- Referencias ----------
+\clearpage % this is need for add +1 to pageref of bibstart used in 'ficha catalografica'.
+\label{bibstart}
+\bibliography{Capitulos/reflatex} % geracao automatica das referencias a partir do arquivo reflatex.bib
+\label{bibend}
+
+
+% --------- Lista de siglas --------
+%\textbf{* Observa\c{c}\~oes:} a lista de siglas nao realiza a ordenacao das siglas em ordem alfabetica
+% Em breve isso sera implementado, enquanto isso:
+%\textbf{Sugest\~ao:} crie outro arquivo .tex para siglas e utilize o comando \sigla{sigla}{descri\c{c}\~ao}.
+%Para incluir este arquivo no final do arquivo, utilize o comando \input{arquivo.tex}.
+%Assim, Todas as siglas serao geradas na ultima pagina. Entao, devera excluir a ultima pagina da versao final do arquivo
+% PDF do seu documento.
+
+
+%-------- Citacoes ---------
+% - Utilize o comando \citeonline{...} para citacoes com o seguinte formato: Autor et al. (2011).
+% Este tipo de formato eh utilizado no comeco do paragrafo. P.ex.: \citeonline{autor2011}
+
+% - Utilize o comando \cite{...} para citacoeses no meio ou final do paragrafo. P.ex.: \cite{autor2011}
+
+
+
+%-------- Titulos com nomes cientificos (titulo, capitulos e secoes) ----------
+% Regra para escrita de nomes cientificos:
+% Os nomes devem ser escritos em italico, 
+%a primeira letra do primeiro nome deve ser em maiusculo e o restante em minusculo (inclusive a primeira letra do segundo nome).
+% VEJA os exemplos abaixo.
+% 
+% 1) voce nao quer que a secao fique com uppercase (caixa alta) automaticamente:
+%\section[nouppercase]{\MakeUppercase{Estudo dos efeitos da radiacao ultravioleta C e TFD em celulas de} {\textit{Saccharomyces boulardii}}
+%
+% 2) por padrao os cases (maiusculas/minuscula) sao ajustados automaticamente, voce nao precisa usar makeuppercase e afins.
+% \section{Introducao} % a introducao sera posta no texto como INTRODUCAO, automaticamente, como a norma indica.
+
+
+\end{document}
