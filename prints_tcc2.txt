@@ -1,0 +1,48 @@
+CAPTURAS PENDENTES PARA A MONOGRAFIA DO TCC2
+
+Salve os arquivos PNG na pasta Imagens/ com os nomes exatos abaixo.
+O documento LaTeX já contém os locais de inserção; cada imagem substitui
+automaticamente o quadro de "captura pendente" quando o arquivo existir.
+Use uma organização e registros fictícios. Oculte nomes pessoais reais,
+e-mails, chaves, tokens, URLs assinadas e outros dados sensíveis.
+Prefira capturas legíveis em resolução de pelo menos 1600 x 900.
+
+1. tela_inicial.png
+   Rota: /
+   Mostrar a página pública com identificação da plataforma e entrada.
+
+2. painel_autenticado.png
+   Rota: /
+   Mostrar o painel após login, organização ativa e módulos disponíveis.
+   Pode ser uma conta administradora de demonstração.
+
+3. lista_amostras.png
+   Rota: /amostras
+   Mostrar pelo menos duas amostras fictícias na listagem.
+   Não apresentar a busca como filtro funcional sem verificar o resultado.
+
+4. cadastro_amostras.png
+   Rota: /amostras/nova
+   Mostrar o formulário com tipo, produtor, abelha e ponto de coleta
+   selecionados com dados fictícios.
+
+5. detalhe_amostra.png
+   Rota: /amostras/{id}
+   Mostrar dados de origem da amostra e pelo menos uma análise associada.
+
+6. analise_arquivos.png
+   Rota: /amostras/{id}/analises/{analiseId}
+   Mostrar o estado da análise e um arquivo fictício já associado.
+   Não capturar uma URL assinada aberta no navegador.
+
+7. lista_produtores.png
+   Rota: /produtores
+   Mostrar a listagem com produtores fictícios.
+
+8. ponto_coleta_mapa.png
+   Rota: /admin/pontos-coleta
+   Abrir o formulário de cadastro/edição e mostrar o seletor de
+   coordenadas no mapa, usando um local fictício.
+
+Depois de anexar as imagens, recompilar o PDF e conferir legibilidade,
+legendas, numeração e referências das oito figuras.

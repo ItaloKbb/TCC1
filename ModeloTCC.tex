@@ -30,6 +30,24 @@
 \setlength{\@fptop}{0pt}
 \makeatother
 
+% As capturas serão fornecidas após esta versão do texto. A figura é substituída
+% automaticamente quando o arquivo indicado em prints_tcc2.txt for adicionado.
+\newcommand{\capturatcc}[3]{%
+\begin{figure}[htbp]
+    \centering
+    \caption{#2}
+    \IfFileExists{Imagens/#1}{%
+        \includegraphics[width=0.9\textwidth]{Imagens/#1}%
+    }{%
+        \fbox{\parbox[c][4.2cm][c]{0.82\textwidth}{\centering
+        Captura pendente: \texttt{\detokenize{#1}}\\
+        Instruções em \texttt{prints\_tcc2.txt}.}}%
+    }
+    \fonte{Autoria própria (2026).}
+    \label{#3}
+\end{figure}%
+}
+
 %Podem utilizar GEOMETRY{...} para realizar pequenos ajustes das margens. Onde, left=esquerda, right=direita, top=superior, bottom=inferior. P.ex.:
 %\geometry{left=3.0cm,right=1.5cm,top=4cm,bottom=1cm} 
 
@@ -38,19 +56,18 @@
 \programa{Coordenadoria do Curso de Engenharia de Software} % nome do curso
 \area{} % Em branco
 
-\documento{Projeto de TCC 1} % [Projeto de TCC 1] ou [Trabalho de Conclusão de Curso] para TCC 2
+\documento{Trabalho de Conclusão de Curso}
 \nivel{Bacharelado}
 \titulacao{Bacharel}
 
-\titulo{\MakeUppercase{Plataforma de gerenciamento de Amostras Laboratoriais e análises no Contexto do NAPI Abelhas}}
+\titulo{\MakeUppercase{Plataforma de Gerenciamento de Amostras Laboratoriais e Análises no Contexto do NAPI Abelhas}}
 \title{Laboratory Sample and Analysis Management Platform in the Context of NAPI Abelhas}
 
 \autor{ITALO KAIQUE BERTINI BUENO} % autor do trabalho
 \cita{BUENO, Italo} % sobrenome (maiusculas), nome do autor do trabalho
 
-% AJUSTE: Palavras-chave alinhadas ao projeto (removido "...")
-\palavraschave{Apicultura. Meliponicultura. Rastreabilidade. Engenharia de Software. API REST. Docker.}
-\keywords{Apiculture. Meliponiculture. Traceability. Software Engineering. REST API. Docker.} % AJUSTE: Keywords
+\palavraschave{Apicultura. Meliponicultura. Amostras laboratoriais. Rastreabilidade. Sistema de informação.}
+\keywords{Apiculture. Meliponiculture. Laboratory samples. Traceability. Information system.}
 
 \comentario{\UTFPRdocumentodata apresentado como requisito parcial para obtenção do título de \UTFPRtitulacaodata\ em Engenharia de Software da \ABNTinstituicaodata\ (UTFPR).}
 
@@ -61,7 +78,7 @@
 %\coorientadorb{Nome do Co-orientador 2}	% este comando inclui o nome do 2o coorientador
 
 \local{Dois Vizinhos} % cidade
-\data{\the\year} % ano automatico
+\data{2026}
 
 %Definir a licença do curso com as seguintes opções (deixar em branco quando não houver):
 \licenca{by}
@@ -93,22 +110,18 @@ A vingança nunca é plena, mata a alma e a envenena.
 Madruga, Seu.
 \end{epigrafe}
 
-% AJUSTE: Resumo focado na PROPOSTA (TCC 1), e não no TCC 2
 \begin{resumo}
-A gestão de amostras na apicultura e meliponicultura brasileira sofre com a descentralização e o uso de métodos manuais, como planilhas, dificultando a rastreabilidade e o controle de qualidade. Este trabalho (Projeto de TCC 1) propõe a arquitetura de uma plataforma web robusta para o gerenciamento centralizado do ciclo de vida destas amostras. A solução é baseada em uma arquitetura de serviços desacoplados, compreendendo uma API RESTful (Node.js/Express) com validação (Zod), autenticação via Clerk, armazenamento de objetos (MinIO) e cache de alta performance (Redis), consumida por uma interface web (React). O projeto detalha a modelagem do banco de dados relacional (PostgreSQL/Prisma) e a prototipagem do ambiente de desenvolvimento (Docker), visando otimizar o controle laboratorial e garantir a integridade dos dados para análises futuras.
+A organização de amostras e análises laboratoriais do NAPI Abelhas motivou a proposta de uma plataforma web apresentada no TCC 1. Este trabalho descreve a implementação dessa proposta e confronta os requisitos planejados com as funcionalidades identificadas no software desenvolvido. A solução é composta por uma interface em Next.js e uma API em NestJS, com autenticação pelo Clerk, persistência em PostgreSQL por meio do Prisma e armazenamento de arquivos em MinIO mediante URLs assinadas. O modelo permite registrar produtores, pontos de coleta, espécies de abelhas, tipos de amostra, amostras, análises e arquivos associados. O desenvolvimento também introduziu organizações e papéis de acesso, além de um ambiente de infraestrutura descrito em Docker Compose. A avaliação apresentada é técnica e documental, baseada na inspeção dos projetos e nas verificações executáveis no ambiente de desenvolvimento. A comparação evidencia funcionalidades implementadas e limitações ainda existentes, como a ausência de filtros avançados na API e de comprovação de uma estratégia de cache com Redis. Não foi realizada avaliação de uso com pesquisadores do NAPI Abelhas.
 \end{resumo}
 
-% AJUSTE: Abstract traduzido do Resumo acima
 \begin{abstract}
-Sample management in Brazilian apiculture and meliponiculture suffers from decentralization and the use of manual methods, such as spreadsheets, hindering traceability and quality control. This work (TCC 1 Project) proposes the architecture for a robust web platform for the centralized management of the lifecycle of these samples. The solution is based on a decoupled services architecture, comprising a RESTful API (Node.js/Express) with validation (Zod), authentication via Clerk, object storage (MinIO), and high-performance cache (Redis), consumed by a web interface (React). The project details the relational database modeling (PostgreSQL/Prisma) and the development environment prototyping (Docker), aiming to optimize laboratory control and ensure data integrity for future analysis.
+The organization of laboratory samples and analyses at NAPI Abelhas motivated the web platform proposed in TCC 1. This work describes the implementation of that proposal and compares the planned requirements with the features identified in the developed software. The solution comprises a Next.js interface and a NestJS API, with authentication provided by Clerk, PostgreSQL persistence through Prisma, and file storage in MinIO using signed URLs. The data model supports producers, collection sites, bee species, sample types, samples, analyses, and associated files. Development also introduced organizations and access roles, as well as infrastructure defined with Docker Compose. The assessment is technical and documentary, based on inspection of the projects and checks that can be performed in the development environment. The comparison identifies implemented features and remaining limitations, including the absence of advanced API filters and of evidence for a Redis caching strategy. No user evaluation with NAPI Abelhas researchers was conducted.
 \end{abstract}
 
 % listas (opcionais, mas recomenda-se a partir de 5 elementos)
 \listadefiguras % geracao automatica da lista de figuras
 \listadetabelas % geracao automatica da lista de tabelas
-\listadequadros % geracao automatica da lista de quadros
 \listadesiglas % geracao automatica da lista de siglas
-\listadesimbolos % geracao automatica da lista de simbolos
 
 % sumario
 \sumario % geracao automatica do sumario
@@ -120,7 +133,7 @@ Sample management in Brazilian apiculture and meliponiculture suffers from decen
 \include{Capitulos/Introducao}
 \include{Capitulos/Desenvolvimento}
 % \include{Capitulos/Recursos} % Não obrigatório porém, a critério do estudante/orientador pode ser adicionado
-% \include{Capitulos/Resultados} % Não obrigatório porém, a critério do estudante/orientador pode ser adicionado
+\include{Capitulos/Resultados}
 \include{Capitulos/Conclusoes}
 
 

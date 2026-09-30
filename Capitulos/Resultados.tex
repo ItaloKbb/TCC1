@@ -1,3 +1,56 @@
 \chapter{Resultados}
+\label{chap:resultados}
 
-Resultados finais do trabalho.
+Os resultados apresentados correspondem às funcionalidades identificadas nos projetos da plataforma e às verificações técnicas realizadas para esta monografia. A existência de uma rota, página ou classe demonstra que o fluxo foi implementado no código; sua presença não substitui a execução com usuários reais nem comprova qualidade de uso.
+
+\section{Fluxos disponibilizados}
+\label{sec:fluxos}
+
+A página inicial pública apresenta a plataforma e o caminho para autenticação. Depois do login, o painel organiza os acessos a amostras e produtores; administradores visualizam também atalhos para os cadastros de apoio. As Figuras \ref{fig:tela-inicial} e \ref{fig:painel} reservam as capturas correspondentes.
+
+\capturatcc{tela_inicial.png}{Página inicial pública da plataforma}{fig:tela-inicial}
+\capturatcc{painel_autenticado.png}{Painel de uma organização com sessão autenticada}{fig:painel}
+
+Na área de amostras, a interface apresenta uma listagem, um formulário de cadastro, uma página de detalhe e a navegação para as análises relacionadas. O cadastro recebe os vínculos exigidos pelo esquema de dados. O formulário permite preparar vários registros antes de enviá-los à API. As Figuras \ref{fig:lista-amostras}, \ref{fig:cadastro-amostras} e \ref{fig:detalhe-amostra} mostram as etapas desse fluxo. O campo de busca visível na listagem não deve ser interpretado como evidência de filtragem efetiva na API, conforme a Seção \ref{sec:comparacao}.
+
+\capturatcc{lista_amostras.png}{Listagem de amostras da organização}{fig:lista-amostras}
+\capturatcc{cadastro_amostras.png}{Formulário de cadastro de amostras}{fig:cadastro-amostras}
+\capturatcc{detalhe_amostra.png}{Detalhe de uma amostra e suas análises}{fig:detalhe-amostra}
+
+Uma análise registra tipo, responsável e estado. Sua página de detalhe oferece o fluxo de anexar e consultar arquivos por meio de URLs assinadas. A Figura \ref{fig:analise-arquivos} reserva a evidência visual desse fluxo. O registro de produtores aparece na Figura \ref{fig:produtores}, e a seleção geográfica de um ponto de coleta na Figura \ref{fig:mapa}.
+
+\capturatcc{analise_arquivos.png}{Detalhe de análise com arquivos associados}{fig:analise-arquivos}
+\capturatcc{lista_produtores.png}{Listagem de produtores cadastrados}{fig:produtores}
+\capturatcc{ponto_coleta_mapa.png}{Cadastro de ponto de coleta com seleção no mapa}{fig:mapa}
+
+\section{Evidências técnicas}
+\label{sec:evidencias}
+
+A Tabela \ref{tab:evidencias} vincula cada resultado descrito ao artefato em que ele pode ser verificado. Trata-se de evidência de implementação, não de medição de desempenho ou de aceitação pelos usuários.
+
+\begin{table}[htbp]
+\centering
+\caption{Relação entre resultados e artefatos examinados}
+\label{tab:evidencias}
+\small
+\begin{tabular}{|p{4.0cm}|p{9.1cm}|}
+\hline
+\textbf{Resultado identificado} & \textbf{Evidência no projeto} \\ \hline
+Autenticação e papéis & Integração Clerk no frontend; guardas de autenticação, organização e papel na API. \\ \hline
+Cadastro e vínculos de amostras & Páginas de amostras; módulo HTTP de amostras; modelo \textit{Amostra} no esquema Prisma. \\ \hline
+Análises e estados & Páginas de análise; módulo HTTP de análises; enumeração \textit{StatusAnalise} no esquema Prisma. \\ \hline
+Pontos georreferenciados & Cadastro administrativo com mapa; modelo \textit{PontoColeta} com latitude e longitude. \\ \hline
+Arquivos associados & Componente de upload; rotas de URLs assinadas; modelos \textit{FileGroup} e \textit{File}. \\ \hline
+Infraestrutura declarada & Docker Compose com API, PostgreSQL, Redis e MinIO; rota de saúde que consulta o banco. \\ \hline
+\end{tabular}
+\fonte{Autoria própria (2026), por inspeção dos projetos de software.}
+\end{table}
+
+A API contém testes unitários para a rota básica, o mecanismo de validação com Zod e o serviço de armazenamento. Esses testes cobrem partes selecionadas do código; não representam cobertura completa dos fluxos de amostras e análises. As condições de execução e o resultado das verificações realizadas para este documento devem ser lidos junto às limitações abaixo.
+
+\section{Limitações da avaliação e da implementação}
+\label{sec:limitacoes}
+
+O exame dos repositórios não encontrou campo para o local físico de armazenamento da amostra nem exigência de imagem no cadastro inicial. As rotas de listagem de amostras e produtores não aplicam os parâmetros de busca e paginação enviados pelo frontend. Os controles de estado pertencem às análises; não existe estado persistido da amostra. Também não foi demonstrada a integração de Redis como armazenamento do módulo de cache da API. Esses itens permanecem fora dos resultados comprovados da implementação.
+
+Não foram disponibilizados, para esta etapa, credenciais de uma organização de teste nem dados de uma avaliação com pesquisadores do NAPI Abelhas. Por isso, as capturas de telas internas foram reservadas para anexação posterior e não se apresentam métricas de usabilidade, redução de tempo ou melhoria de qualidade dos dados. A execução técnica isolada não substitui essa validação.

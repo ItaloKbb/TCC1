@@ -1,156 +1,86 @@
-\chapter{Sistema Proposto}
-\label{chap:sistema_proposto}
+\chapter{Sistema Implementado}
+\label{chap:sistema_implementado}
 
-A solução proposta visa anteder inicialmente os membros NAPI Abelhas, podendo em etapa futura atender outros grupos de pesquisadores do Brasil e do Mundo, de diferentes instituições. Será necessário registrar dados de pesquisadores, produtores e técnicos responsáveis por cada amostra, mas como usuário do sistema, na sua versão proposta neste documento, irá existir apenas um perfil de usuário administrador, referente a função do técnico responsável.
+O TCC 1 definiu uma plataforma para reunir informações de amostras e análises do NAPI Abelhas. A implementação foi organizada em dois projetos: uma aplicação web e uma API. Este capítulo apresenta as funcionalidades identificadas nos projetos, as atividades de desenvolvimento e as alterações observadas em relação à proposta original.
 
-A solução foi projetada para atender uma das principais demandas dos pesquisadores do NAPI Abelhas, focando na integridade dos dados, na rastreabilidade e na eficiência do fluxo de trabalho. A seguir, são detalhados os requisitos e a arquitetura do sistema.
-
-\section{Requisitos}
+\section{Requisitos e funcionalidades}
 \label{sec:requisitos}
 
-\subsection{Requisitos Funcionais}
+O fluxo implementado começa com os cadastros de apoio. A interface oferece telas para produtores e, na área administrativa, para cidades do IBGE, tipos de amostra, tipos de análise, espécies de abelhas, responsáveis e pontos de coleta. Cada ponto de coleta possui nome, cidade, latitude, longitude e raio opcional. O formulário administrativo utiliza um mapa para selecionar as coordenadas.
 
-As funcionalidades do sistema foram estruturadas em módulos lógicos para cobrir o fluxo operacional do laboratório e as necessidades administrativas do NAPI Abelhas.
+O registro de uma amostra exige nome, data de coleta e vínculos com um produtor, um ponto de coleta, uma espécie de abelha e um tipo de amostra. O identificador da amostra é gerado como UUID no banco de dados. Uma amostra pode possuir várias análises, cada uma vinculada a um tipo e a um responsável. O estado de uma análise pode ser \textit{pendente}, \textit{em preparo}, \textit{aguardando resultado}, \textit{em revisão}, \textit{concluída} ou \textit{rejeitada}. O esquema de dados não possui um estado próprio para a amostra.
 
-\begin{itemize}
-    \item \textbf{Módulo de Gestão Administrativa:}
-    \begin{itemize}
-        \item \textbf{Controle de Acesso e Identidade:}  O sistema garante que apenas usuários autorizados (Responsáveis Técnicos) acessem as funcionalidades de escrita, mantendo um registro auditável de quem realizou cada operação (vínculo com a entidade \textit{Responsável}).
-        Integração com o serviço externo \textit{Clerk}\footnote{Uma plataforma autenticação e gerenciamento de usuário: https://clerk.com/} para autenticação segura.
-        
-        \item \textbf{Gestão de Produtores e Pontos de Coleta:} Funcionalidade de cadastro completo de apicultores e meliponicultores. Inclui o registro georreferenciado (latitude, longitude e raio) dos apiários (\textit{ponto de coleta} das amostras), permitindo a correlação futura entre informações obtidas das amostras e suas respectiva região de origem, viabilizando a execução de pesquisas relacionadas a certificação de origem geográfica do mel produzido e identificação de condições atípicas/sazonais, que impactam na produção do mel em micro e macro regiões.
-    \end{itemize}
-    
-    \item \textbf{Módulo para Gestão das Amostras e Análises:}
-    \begin{itemize}
-        \item \textbf{Recepção e Rastreabilidade (Check-in):} Processo de digitalização da entrada da amostra física produzidas pelo NAPI. O sistema gera um identificador único (UUID) para a entidade \textit{Amostra}, vinculando-a obrigatoriamente a um produtor, a um ponto de coleta, a uma espécie de abelha, a um tipo de amostra e a imagens relacionadas, e ao local onde essas amostras estão armazenadas, estabelecendo a base para a rastreabilidade total.
-        \item \textbf{Gerenciamento de Análises:} Interface para a criação e acompanhamento de das análises físico-químicas realizadas. O sistema permite atribuir múltiplos tipos de exames vinculados a cada amostra, sendo que para cada um diferente tipo de arquivo com seus resultados serão armazenados no sistema. Será utilizado um padrão de \textit{Pre-signed URLs} para realizar uploads diretos e seguros para o \textit{Object Storage} (MinIO), garantindo que documentos pesados não impactem a performance da API.
-    \end{itemize}
-    \item \textbf{Módulo de Consultas:}
-    \begin{itemize}
-        %\item \textbf{Gestão Documental (Upload Seguro):} Mecanismo para envio de arquivos de laudos e evidências visuais.
-        \item \textbf{Consultas com filtros:} deve ser possível consultar os dados cadastrados, com filtros relacionados ao produto, tipo de amostra, período, status, entre outros.
-        
-         %Ferramenta de busca avançada que permite localizar amostras por produtor, período ou status. Facilita a recuperação de laudos antigos armazenados na tabela \textit{File}, servindo como repositório centralizado de informações do NAPI.
-    \end{itemize}
-\end{itemize}
+Arquivos são representados pelos modelos \textit{FileGroup} e \textit{File}. A API fornece URLs temporárias para envio e leitura de objetos no MinIO. No frontend, o arquivo é transferido diretamente para o serviço de armazenamento, e a referência pode ser associada a uma análise. A implementação também admite um grupo de arquivos associado a uma amostra. O modelo não obriga a presença de imagens no cadastro inicial da amostra.
 
-\subsection{Requisitos Não-Funcionais}
+O acesso depende de uma sessão autenticada no Clerk. A aplicação utiliza uma organização ativa e distingue os papéis de administrador e membro. Na API, as rotas de escrita dos módulos de amostras, análises e cadastros exigem o papel de administrador; as consultas exigem autenticação e organização ativa. O identificador da organização é registrado nas entidades operacionais e empregado nas consultas desses módulos. Esse recorte de acesso amplia o perfil único de administrador previsto no TCC 1 \cite{clerk2026}.
 
-Os requisitos não-funcionais definem os atributos de qualidade e as restrições técnicas da solução proposta:
+\section{Atividades de desenvolvimento}
+\label{sec:atividades}
 
-\begin{itemize}
-    \item \textbf{Segurança:} para garantir um acesso seguro aos dados, a aplicação proposta não irá armazenar senhas localmente, delegando a autenticação ao uso de tokens JWT. O acesso aos arquivos de laudos será protegido por URLs assinadas temporárias, com tempo de expiração reduzido para visualização.
+As atividades observáveis nos artefatos do projeto podem ser agrupadas em quatro etapas, sem atribuir datas ou duração que não estejam comprovadas por registros de execução:
+\begin{enumerate}
+    \item \textbf{Modelagem e persistência:} definição das entidades e relações no esquema Prisma, incluindo o vínculo das entidades operacionais à organização e a separação entre metadados de arquivos e objetos armazenados.
+    \item \textbf{API:} implementação de módulos NestJS para cadastros, amostras, análises e arquivos; validação de entradas com Zod; integração com Clerk e emissão de URLs assinadas para o MinIO.
+    \item \textbf{Interface:} construção das páginas em Next.js para autenticação, navegação, cadastros, consulta de amostras, detalhe de análises e administração; inclusão do mapa de pontos de coleta.
+    \item \textbf{Infraestrutura e verificação:} definição de serviços no Docker Compose, documentação da API com Swagger, rota de saúde que consulta o banco de dados e criação de testes unitários para componentes selecionados da API.
+\end{enumerate}
 
-    \item \textbf{Desempenho (Performance):} com o crescimento progressivo do número de usuários — envolvendo inicialmente pesquisadores de todo o estado — o sistema deve apresentar desempenho capaz de suportar um aumento de acessos a médio prazo. Para isso, o sistema proposto utilizará uma estratégia \textit{Cache-First} (Redis) para dados de leitura frequente e baixa volatilidade (como listas de cidades, espécies de abelhas e tipos de análise), reduzindo a latência da interface.
+Essas etapas substituem o cronograma prospectivo do TCC 1. A existência dos artefatos demonstra o trabalho de implementação correspondente, mas não comprova, por si só, implantação contínua, testes com usuários ou cumprimento dos prazos inicialmente previstos.
 
-    \item \textbf{Escalabilidade e Portabilidade:} existe a necessidade de que a aplicação possa ser implantada, atualizada e ampliada de maneira eficiente, acompanhando o aumento da demanda e possíveis mudanças de infraestrutura. Para tal, a arquitetura será integralmente baseada em contêineres (Docker), permitindo que a API, o banco de dados e os serviços de suporte sejam implantados e escalados de forma independente em qualquer ambiente compatível.
-
-\end{itemize}
-
-
-\section{Tecnologias Utilizadas}
-\label{sec:tecnologias}
-
-A seleção tecnológica priorizou ferramentas de código aberto, robustas e amplamente adotadas pelo mercado, visando atender aos requisitos de desempenho e escalabilidade do projeto.
-
-\begin{itemize}
-    \item \textbf{Linguagem e Runtime:}
-        \begin{itemize}
-            \item \textbf{Node.js:} Ambiente de execução JavaScript assíncrono e orientado a eventos, construído sobre o motor V8 do Google Chrome, ideal para aplicações escaláveis de rede \cite{casciaro2020}.
-            \item \textbf{TypeScript:} Superconjunto do JavaScript que adiciona tipagem estática opcional à linguagem, proporcionando maior segurança no desenvolvimento e facilidade na manutenção do código \cite{cherny2019}.
-        \end{itemize}
-
-    \item \textbf{Frontend:}
-        \begin{itemize}
-            \item \textbf{React:} Biblioteca JavaScript declarativa, eficiente e flexível para a construção de interfaces de usuário baseadas em componentes \cite{banks2020}.
-            \item \textbf{Vite:} Ferramenta de construção (\textit{build tool}) que utiliza o suporte nativo a módulos ES (ESM) para oferecer um ambiente de desenvolvimento com recarregamento rápido e otimizado \cite{vite2024}.
-        \end{itemize}
-
-    \item \textbf{Persistência:}
-        \begin{itemize}
-            \item \textbf{PostgreSQL:} Sistema gerenciador de banco de dados objeto-relacional (ORDBMS) de código aberto, reconhecido por sua robustez, conformidade com padrões ACID e extensibilidade \cite{postgres2024}.
-            \item \textbf{Prisma ORM:} Mapeador objeto-relacional moderno que oferece segurança de tipos (\textit{type-safety}) e gerencia migrações de esquema de forma declarativa \cite{prisma2024}.
-        \end{itemize}
-
-    \item \textbf{Armazenamento e Cache:}
-        \begin{itemize}
-            \item \textbf{MinIO:} Servidor de armazenamento de objetos de alto desempenho, compatível com a API Amazon S3, utilizado para persistência segura de arquivos não estruturados \cite{minio2024}.
-            \item \textbf{Redis:} Armazenamento de estrutura de dados em memória, utilizado como banco de dados, cache e \textit{message broker} para otimização de latência \cite{redis2024}.
-        \end{itemize}
-
-    \item \textbf{Segurança e Infraestrutura:}
-        \begin{itemize}
-            \item \textbf{Clerk:} Solução completa de gerenciamento de identidade e acesso (IAM), fornecendo autenticação segura e gestão de sessões de usuário \cite{clerk2024}.
-            \item \textbf{Docker:} Plataforma de software para desenvolvimento, envio e execução de aplicações dentro de contêineres, garantindo isolamento e portabilidade entre ambientes \cite{poulton2023}.
-        \end{itemize}
-\end{itemize}
-
-\section{Arquitetura Proposta}
+\section{Tecnologias e arquitetura}
 \label{sec:arquitetura}
-A arquitetura da solução segue o modelo de serviços desacoplados, visando escalabilidade e facilidade de manutenção. A Figura \ref{fig:arquitetura} ilustra a visão geral dos componentes e suas interações.
 
-O \textit{Frontend} (React) atua como cliente consumidor, comunicando-se com a API Backend para operações transacionais e interagindo diretamente com o \textit{Object Storage} (MinIO) para a transferência de arquivos binários, otimizando o tráfego de rede.
+O frontend utiliza React com Next.js e o roteador baseado em arquivos do \textit{App Router} \cite{next2026}. A API foi construída em TypeScript com NestJS, sobre o adaptador Express, e expõe rotas HTTP sob o prefixo \texttt{/api/v1} \cite{nest2026}. Assim, a referência a Express no TCC 1 permanece válida como plataforma HTTP subjacente, mas NestJS é o framework que organiza os módulos, controladores e casos de uso.
 
-\begin{figure}[H]
+O Clerk fornece autenticação e informações sobre a organização ativa. A interface envia o token nas chamadas à API; nela, guardas verificam a sessão, a organização e, nas operações restritas, o papel do usuário. O acesso ao banco de dados é feito pelo Prisma sobre PostgreSQL. Para arquivos, a API assina a operação e o navegador envia os bytes ao MinIO, evitando que a transferência do arquivo passe pela API. A Figura \ref{fig:arquitetura} representa esses componentes e fluxos.
+
+\begin{figure}[htbp]
     \centering
-    \caption{Visão Geral da Arquitetura do Sistema}
-    \includegraphics[width=1.0\textwidth]{Imagens/diagramaArquitetura.png}
-    \fonte{Autoria própria (2025).}
+    \caption{Arquitetura observada nos projetos da plataforma}
+    \includegraphics[width=0.94\textwidth]{Imagens/diagramaArquiteturaTCC2.png}
+    \fonte{Autoria própria (2026), com base nos projetos do frontend e da API.}
     \label{fig:arquitetura}
 \end{figure}
 
-\section{Persistência de Dados}
+O arquivo Docker Compose da API define serviços para a API, PostgreSQL, MinIO e Redis. A aplicação também registra um módulo de cache, porém não foi identificada uma conexão desse módulo a um armazenamento Redis nem uma política \textit{cache-first} aplicada às consultas. Por esse motivo, Redis é representado na figura como infraestrutura provisionada, e não como caminho de leitura comprovado. Não são apresentados indicadores de latência ou escalabilidade.
+
+\section{Persistência de dados}
 \label{sec:persistencia}
 
-A persistência adota uma abordagem híbrida: dados estruturados relacionais para garantir a integridade do negócio e armazenamento de objetos para arquivos binários. A Figura \ref{fig:der} apresenta o Modelo Lógico do Banco de Dados.
+O esquema Prisma contém onze modelos: \textit{CidadesIBGE}, \textit{Produtor}, \textit{Responsavel}, \textit{TipoAmostra}, \textit{TipoAnalise}, \textit{Abelha}, \textit{PontoColeta}, \textit{Amostra}, \textit{Analise}, \textit{FileGroup} e \textit{File}. São sete cadastros de apoio, além das entidades de amostra, análise e arquivos. A Figura \ref{fig:der} resume as relações centrais e os campos relevantes ao fluxo estudado.
 
-Entidades principais como \textit{Amostra}, \textit{Produtor} e \textit{Análise} são mantidas no PostgreSQL para garantir integridade referencial estrita, enquanto as tabelas \textit{File} e \textit{FileGroup} gerenciam apenas os metadados e ponteiros para os arquivos físicos salvos no \textit{Storage}.
-
-\begin{figure}
+\begin{figure}[htbp]
     \centering
-    \caption{Diagrama Entidade-Relacionamento (DER) Lógico}
-    \includegraphics[width=1.0\textwidth]{Imagens/diagramaDB.png}
-    \fonte{Autoria própria (2025).}
+    \caption{Modelo de dados implementado: entidades e vínculos principais}
+    \includegraphics[width=0.98\textwidth]{Imagens/diagramaDadosTCC2.png}
+    \fonte{Autoria própria (2026), a partir do esquema Prisma da API.}
     \label{fig:der}
 \end{figure}
 
-\chapter{Cronograma de Desenvolvimento}
+\textit{Amostra} relaciona produtor, ponto de coleta, abelha e tipo de amostra. \textit{Analise} relaciona a amostra, o tipo de análise e o responsável, além de registrar seu estado. \textit{FileGroup} faz a associação opcional dos arquivos a uma amostra ou análise; \textit{File} guarda uma chave de objeto, seu tipo e metadados de envio. Os dados binários permanecem fora do banco relacional. A cidade é um cadastro de referência para produtores, responsáveis e pontos de coleta. O campo \texttt{orgId} representa a organização nas entidades operacionais, embora não exista uma tabela \textit{Organizacao} no esquema: o gerenciamento das organizações é delegado ao Clerk.
 
-O desenvolvimento da Plataforma de Gerenciamento de Amostras e Análises de Abelhas será executado ao longo do próximo semestre letivo, correspondendo à disciplina de Trabalho de Conclusão de Curso 2 (TCC 2). O planejamento foi estruturado para garantir a entrega incremental de valor, seguindo os princípios ágeis adotados na metodologia.
+\section{Comparação com a proposta do TCC 1}
+\label{sec:comparacao}
 
-As atividades foram divididas em fases lógicas, desde a configuração do ambiente até a validação final com usuários e defesa do trabalho.
+A Tabela \ref{tab:comparacao} separa substituições tecnológicas, ampliação funcional e requisitos cuja implementação não foi identificada. A classificação descreve o estado dos projetos examinados; não atribui justificativas de projeto que não estejam registradas.
 
-\begin{table}[ht]
+\begin{table}[htbp]
 \centering
-\caption{Cronograma de Atividades Previsto para o TCC 2}
-\label{tab:cronograma}
-\vspace{0.2cm}
-\resizebox{\textwidth}{!}{% Redimensiona a tabela para caber na largura da página
-\begin{tabular}{|l|c|c|c|c|c|c|}
+\caption{Comparação entre proposta e implementação}
+\label{tab:comparacao}
+\small
+\begin{tabular}{|p{2.7cm}|p{5.2cm}|p{5.2cm}|}
 \hline
-\textbf{Atividades / Mês} & \textbf{Mês 1} & \textbf{Mês 2} & \textbf{Mês 3} & \textbf{Mês 4} & \textbf{Mês 5} & \textbf{Mês 6} \\ \hline
-Revisão e Refinamento de Requisitos & X & & & & & \\ \hline
-Configuração do Ambiente (Docker/CI) & X & & & & & \\ \hline
-Implementação do Banco de Dados & X & X & & & & \\ \hline
-Desenvolvimento do Backend (API) & & X & X & & & \\ \hline
-Desenvolvimento do Frontend (React) & & & X & X & & \\ \hline
-Integração e Testes Unitários & & & & X & X & \\ \hline
-Escrita da Monografia Final & & X & X & X & X & \\ \hline
-Revisão Final e Preparação da Defesa & & & & & & X \\ \hline
-\end{tabular}%
-}
-\par
-\vspace{0.2cm}
-\small{Fonte: Autoria própria (2025).}
+\textbf{Aspecto} & \textbf{TCC 1} & \textbf{Implementação observada} \\ \hline
+Interface web & React com Vite. & React com Next.js e App Router; substituição tecnológica. \\ \hline
+API & Node.js/Express. & NestJS com adaptador Express, módulos, controladores e casos de uso; detalhamento e alteração da estrutura. \\ \hline
+Controle de acesso & Um perfil administrador. & Organizações com papéis de administrador e membro; ampliação funcional. \\ \hline
+Arquivos & Imagens da amostra obrigatórias e laudos associados às análises. & Upload e grupos de arquivos implementados; imagem não obrigatória no cadastro da amostra. \\ \hline
+Rastreabilidade & Identificação da amostra e registro do local físico de armazenamento. & UUID e vínculos de origem presentes; local físico de armazenamento ausente no modelo. \\ \hline
+Consultas & Filtros por produto, tipo, período e estado. & Listagens e campos de busca na interface; filtros avançados não aplicados nas rotas de listagem da API. \\ \hline
+Cache & Estratégia \textit{cache-first} com Redis. & Redis provisionado no Compose; uso efetivo como cache de consultas não demonstrado. \\ \hline
+\end{tabular}
+\fonte{Autoria própria (2026), por comparação entre o TCC 1 e os projetos de software.}
 \end{table}
 
-\section{Detalhamento das Etapas}
-
-\begin{itemize}
-    \item \textbf{Mês 1 (Fundação):} Foco na infraestrutura DevOps. Configuração dos containers Docker para o banco de dados PostgreSQL e o sistema de arquivos MinIO. Criação das migrações iniciais do Prisma ORM.
-    \item \textbf{Mês 2 e 3 (Core Backend):} Desenvolvimento dos microsserviços principais em Node.js. Implementação da autenticação, gestão de perfis de usuário e CRUD de amostras.
-    \item \textbf{Mês 4 (Frontend e Integração):} Construção das interfaces em React. Integração com a API REST. Implementação da funcionalidade de upload de laudos.
-    \item \textbf{Mês 5 (Refinamento):} Testes de ponta a ponta, correção de bugs (polimento) e finalização da escrita acadêmica.
-    \item \textbf{Mês 6 (Conclusão):} Entrega da versão final do documento e apresentação para a banca examinadora.
-\end{itemize}
+A presença de telas de busca não equivale à implementação do requisito de consulta filtrada: a interface envia parâmetros, mas a rota de listagem de amostras consulta os registros apenas pelo identificador da organização. Da mesma forma, os vínculos de origem registrados pela amostra representam rastreabilidade parcial, pois o local físico de guarda não faz parte do esquema. Essas diferenças orientam a apresentação dos resultados e dos trabalhos futuros.

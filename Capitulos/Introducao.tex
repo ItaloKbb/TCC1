@@ -1,10 +1,31 @@
 \chapter{Introdução}
 \label{chap:introducao}
 
-A apicultura e a meliponicultura brasileiras são setores estratégicos para a bioeconomia nacional. Dados recentes indicam que o valor da produção da pecuária e aquicultura atingiu cifras recordes, com o mel desempenhando um papel crucial neste montante \cite{ibge2024}. No entanto, existe um descompasso tecnológico: enquanto a produção cresce, a gestão laboratorial permanece analógica e manual \cite{gibbon1996}.
+A produção de mel e de outros produtos apícolas integra a atividade agropecuária brasileira \cite{ibge2024}. No contexto da pesquisa, a identificação da origem de uma amostra e sua associação aos resultados laboratoriais são necessárias para que os dados possam ser recuperados e interpretados posteriormente. A rastreabilidade pressupõe a possibilidade de acompanhar um produto e suas informações ao longo das etapas relevantes da cadeia \cite{iso22005}. Sistemas de informação laboratoriais oferecem uma forma de organizar esses registros \cite{gibbon1996}.
 
-Nesse contexto, destaca-se que no Paraná, existe o \textbf{NAPI Abelhas} (Novo Arranjo de Pesquisa e Inovação)\footnote{https://www.iaraucaria.pr.gov.br/napis/napi-abelhas/}, uma rede colaborativa financiada pela Fundação Araucária que integra pesquisadores de diversas instituições paranaenses, incluindo a UTFPR, sendo um dos eixos centrais do NAPI é a caracterização e o controle de qualidade dos produtos apícolas e meliponícolas.
+O NAPI Abelhas reúne pesquisadores de diferentes áreas e instituições no Paraná. O projeto apresentado no TCC 1 partiu da necessidade de organizar informações sobre produtores, locais de coleta, amostras e análises que estavam distribuídas em planilhas. A proposta definiu uma plataforma web e uma arquitetura inicial. O presente trabalho relata a implementação dessa plataforma, as escolhas efetivamente incorporadas aos projetos de software e as diferenças observadas em relação ao planejamento.
 
-No NAPI Abelhas existem especialistas de diferentes áreas, incluindo zootecnia, agronomia, química, biologia, biotecnologias e ciência da computação. Diversas amostas de produtos relacionados abelhas (pólen, própolis, mel, entre outras). Essas amostras passam por diferentes exames laboratoriais, sendo atualmente organizados em diferentes planilhas, decentralizadas em cada unidade com pesquisadores do NAPI,
+\section{Problema e objetivos}
+\label{sec:objetivos}
 
-Nesse contexto, este projeto propõe um sistemas de gestão de informações laboratoriais, para o gerenciamento das amostras e análises produzidas pelos participantes do NAPI Abelhas, fornecendo um acesso organizado e ágil a esses dados, o que irá fomentar novas pesquisas nessas área.
+O problema abordado é a fragmentação dos registros de amostras e resultados de análises, que dificulta associar cada resultado à sua origem e recuperar as informações para consultas posteriores. O objetivo geral deste trabalho é implementar e documentar uma plataforma web para o gerenciamento desses registros no contexto do NAPI Abelhas.
+
+Os objetivos específicos são:
+\begin{itemize}
+    \item modelar produtores, pontos de coleta, espécies de abelhas, tipos de amostra, amostras, análises e arquivos associados;
+    \item implementar uma interface de cadastro e consulta e uma API para persistência e recuperação dos dados;
+    \item integrar autenticação e controle de acesso por organização e papel;
+    \item disponibilizar o envio e a recuperação de arquivos associados às análises;
+    \item comparar a implementação com os requisitos do TCC 1 e registrar as limitações constatadas.
+\end{itemize}
+
+\section{Procedimentos adotados}
+\label{sec:metodologia}
+
+O trabalho tem caráter aplicado: parte de uma proposta de sistema e apresenta seus artefatos de implementação. A descrição técnica foi construída por inspeção do código-fonte do frontend, da API, do esquema Prisma e da configuração de infraestrutura. A comparação com o TCC 1 considera uma funcionalidade implementada apenas quando há evidência correspondente nesses artefatos. A presença de uma tecnologia no arquivo de dependências ou na configuração de contêineres, isoladamente, não demonstra que a funcionalidade planejada esteja em operação.
+
+A verificação descrita no Capítulo \ref{chap:resultados} separa a inspeção estática, os testes automatizados disponíveis e as capturas de interface previstas. Não houve estudo de usabilidade, entrevista ou validação com pesquisadores e técnicos do NAPI Abelhas. Consequentemente, o texto não atribui à plataforma ganhos mensurados de produtividade, desempenho ou qualidade dos dados.
+
+\section{Organização do trabalho}
+
+O Capítulo \ref{chap:sistema_implementado} apresenta requisitos, atividades de desenvolvimento, arquitetura e persistência, indicando as alterações de escopo observadas. O Capítulo \ref{chap:resultados} reúne as funcionalidades identificadas, as evidências técnicas e as limitações. O Capítulo \ref{chap:conclusao} sintetiza as contribuições e indica trabalhos futuros.
