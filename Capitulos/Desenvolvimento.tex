@@ -14,6 +14,19 @@ Arquivos são representados pelos modelos \textit{FileGroup} e \textit{File}. A 
 
 O acesso depende de uma sessão autenticada no Clerk. A aplicação utiliza uma organização ativa e distingue os papéis de administrador e membro. Na API, as rotas de escrita dos módulos de amostras, análises e cadastros exigem o papel de administrador; as consultas exigem autenticação e organização ativa. O identificador da organização é registrado nas entidades operacionais e empregado nas consultas desses módulos. Esse recorte de acesso amplia o perfil único de administrador previsto no TCC 1 \cite{clerk2026}.
 
+\section{Casos de uso da implementação}
+\label{sec:casos-uso}
+
+A Figura \ref{fig:casos-uso} sintetiza os objetivos disponíveis para cada perfil. O visitante utiliza o Clerk para se autenticar. O membro consulta amostras, análises, arquivos e produtores da organização ativa. O administrador herda essas consultas e pode realizar os cadastros e alterações representados na figura. Os casos de uso descrevem as funções identificadas no software; não incluem filtros avançados ou gerenciamento de permissões de membros, que não foram comprovados na implementação examinada.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Diagrama de casos de uso da plataforma implementada}
+    \includegraphics[width=0.85\textwidth]{Imagens/diagramaCasosUsoTCC2.png}
+    \fonte{Autoria própria (2026), com base nas páginas do frontend e nas rotas da API.}
+    \label{fig:casos-uso}
+\end{figure}
+
 \section{Atividades de desenvolvimento}
 \label{sec:atividades}
 

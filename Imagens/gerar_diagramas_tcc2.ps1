@@ -136,3 +136,88 @@ Caixa 70 1050 320 230 'Arquivo' '#fff4da' "id (PK)`nfileGroupId / url`ntipo"
 Texto 'Cidade IBGE também é referência para ponto de coleta e responsável.' 500 1370 1450 48 $script:fonteNota $script:pincelCinza $true
 Texto 'PK: chave primária    FK: chave estrangeira    ?: associação opcional' 500 1420 1450 48 $script:fonteNota $script:pincelCinza $true
 Encerrar 'diagramaDadosTCC2.png'
+
+# Casos de uso: atores e associações derivados das páginas e guardas da API.
+function Ligacao([int] $x1, [int] $y1, [int] $x2, [int] $y2) {
+    $linha = [System.Drawing.Pen]::new((Cor '#536b80'), 5)
+    $script:g.DrawLine($linha, $x1, $y1, $x2, $y2)
+    $linha.Dispose()
+}
+
+function Ator([int] $x, [int] $y, [string] $nome) {
+    $linha = [System.Drawing.Pen]::new((Cor '#203955'), 7)
+    $script:g.DrawEllipse($linha, ($x - 30), $y, 60, 60)
+    $script:g.DrawLine($linha, $x, ($y + 60), $x, ($y + 137))
+    $script:g.DrawLine($linha, ($x - 57), ($y + 90), ($x + 57), ($y + 90))
+    $script:g.DrawLine($linha, $x, ($y + 137), ($x - 52), ($y + 200))
+    $script:g.DrawLine($linha, $x, ($y + 137), ($x + 52), ($y + 200))
+    Texto $nome ($x - 155) ($y + 210) 310 55 $script:fonteCaixa $script:pincelEscuro $true
+    $linha.Dispose()
+}
+
+function Caso([int] $y, [string] $rotulo, [string] $fundoHex) {
+    $fundo = [System.Drawing.SolidBrush]::new((Cor $fundoHex))
+    $linha = [System.Drawing.Pen]::new((Cor '#203955'), 5)
+    $script:g.FillEllipse($fundo, 620, $y, 1000, 108)
+    $script:g.DrawEllipse($linha, 620, $y, 1000, 108)
+    Texto $rotulo 675 ($y + 10) 890 88 $script:fonteCaso $script:pincelEscuro $true
+    $linha.Dispose(); $fundo.Dispose()
+}
+
+Iniciar 2100 2300
+$script:fonteCaso = [System.Drawing.Font]::new('Segoe UI', 32)
+Texto 'Casos de uso da plataforma' 90 15 1920 78 $script:fonteTitulo $script:pincelEscuro $true
+$limite = [System.Drawing.Pen]::new((Cor '#9fb1c1'), 5)
+$script:g.DrawRectangle($limite, 480, 130, 1280, 2090)
+$limite.Dispose()
+Texto 'Plataforma NAPI Abelhas' 700 150 840 60 $script:fonteCaixa $script:pincelEscuro $true
+
+# Associações sem seta: o ator inicia ou participa do caso de uso.
+Ligacao 325 305 620 294
+Ligacao 1815 305 1620 294
+Ligacao 325 760 620 569
+Ligacao 325 760 620 729
+Ligacao 325 760 620 889
+Ligacao 325 1540 620 1144
+Ligacao 325 1540 620 1304
+Ligacao 325 1540 620 1464
+Ligacao 325 1540 620 1624
+Ligacao 325 1540 620 1784
+Ligacao 325 1540 620 1944
+
+# Generalização: o administrador também possui as consultas do membro.
+$heranca = [System.Drawing.Pen]::new((Cor '#536b80'), 5)
+$script:g.DrawLines($heranca, [System.Drawing.Point[]] @(
+    [System.Drawing.Point]::new(150, 1540),
+    [System.Drawing.Point]::new(92, 1540),
+    [System.Drawing.Point]::new(92, 760),
+    [System.Drawing.Point]::new(132, 760)
+))
+$triangulo = [System.Drawing.Point[]] @(
+    [System.Drawing.Point]::new(157, 760),
+    [System.Drawing.Point]::new(132, 746),
+    [System.Drawing.Point]::new(132, 774)
+)
+$branco = [System.Drawing.SolidBrush]::new((Cor '#ffffff'))
+$script:g.FillPolygon($branco, $triangulo)
+$script:g.DrawPolygon($heranca, $triangulo)
+$branco.Dispose(); $heranca.Dispose()
+
+Caso 240 'Autenticar-se na plataforma' '#eeeaf8'
+Caso 515 'Consultar amostras' '#e8f5f3'
+Caso 675 'Consultar análises e arquivos' '#e8f5f3'
+Caso 835 'Consultar produtores' '#e8f5f3'
+Caso 1090 'Cadastrar ou editar produtores' '#fff4da'
+Caso 1250 'Cadastrar ou editar pontos de coleta' '#fff4da'
+Caso 1410 'Cadastrar ou editar amostras' '#fff4da'
+Caso 1570 'Registrar ou atualizar análises' '#fff4da'
+Caso 1730 'Anexar arquivo a uma análise' '#fff4da'
+Caso 1890 'Manter cadastros de apoio' '#fff4da'
+
+Ator 245 210 'Visitante'
+Ator 245 665 'Membro'
+Ator 245 1450 'Administrador'
+Ator 1900 210 'Clerk'
+Texto 'O administrador herda as consultas do membro.' 655 2075 930 62 $script:fonteNota $script:pincelCinza $true
+$script:fonteCaso.Dispose()
+Encerrar 'diagramaCasosUsoTCC2.png'

@@ -46,11 +46,11 @@ Infraestrutura declarada & Docker Compose com API, PostgreSQL, Redis e MinIO; ro
 \fonte{Autoria própria (2026), por inspeção dos projetos de software.}
 \end{table}
 
-A API contém testes unitários para a rota básica, o mecanismo de validação com Zod e o serviço de armazenamento. Esses testes cobrem partes selecionadas do código; não representam cobertura completa dos fluxos de amostras e análises. As condições de execução e o resultado das verificações realizadas para este documento devem ser lidos junto às limitações abaixo.
+A API contém testes unitários para a rota básica, o mecanismo de validação com Zod e o serviço de armazenamento. Esses testes cobrem partes selecionadas do código; não representam cobertura completa dos fluxos de amostras e análises. Nesta revisão, a verificação técnica executada foi a conferência estática de referências, citações, nomes de figuras e correspondência do texto com os artefatos de software.
 
 \section{Limitações da avaliação e da implementação}
 \label{sec:limitacoes}
 
 O exame dos repositórios não encontrou campo para o local físico de armazenamento da amostra nem exigência de imagem no cadastro inicial. As rotas de listagem de amostras e produtores não aplicam os parâmetros de busca e paginação enviados pelo frontend. Os controles de estado pertencem às análises; não existe estado persistido da amostra. Também não foi demonstrada a integração de Redis como armazenamento do módulo de cache da API. Esses itens permanecem fora dos resultados comprovados da implementação.
 
-Não foram disponibilizados, para esta etapa, credenciais de uma organização de teste nem dados de uma avaliação com pesquisadores do NAPI Abelhas. Por isso, as capturas de telas internas foram reservadas para anexação posterior e não se apresentam métricas de usabilidade, redução de tempo ou melhoria de qualidade dos dados. A execução técnica isolada não substitui essa validação.
+Não foram disponibilizados, para esta etapa, credenciais de uma organização de teste nem dados de uma avaliação com pesquisadores do NAPI Abelhas. Por isso, as capturas de telas internas foram reservadas para anexação posterior e não se apresentam métricas de usabilidade, redução de tempo ou melhoria de qualidade dos dados. Os testes automatizados da API não puderam ser executados neste ambiente, de modo que este texto não apresenta resultados de aprovação desses testes. A inspeção estática não substitui a execução integrada nem a validação com usuários.
