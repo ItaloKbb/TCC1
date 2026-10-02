@@ -1,0 +1,1 @@
+powershell -ExecutionPolicy Bypass -File .\compilar_pdf.ps1
