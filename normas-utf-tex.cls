@@ -768,9 +768,11 @@
 
 % interface de suporte para os comandos \chapter[nouppercase]{...} e \section[nouppercase]{...}
 \let\realchapter\chapter
+% \protect evita que o \MakeUppercase do LaTeX >= 2022 grave
+% "\MakeUppercase []{...}" no .toc e interrompa a passagem seguinte.
 \renewcommand{\chapter}[2][uppercase]
 {
-  \ifthenelse{\equal{#1}{nouppercase}}{\realchapter{#2}}{\realchapter{\texorpdfstring{\MakeUppercase{#2}}{#2}}}
+  \ifthenelse{\equal{#1}{nouppercase}}{\realchapter{#2}}{\realchapter{\texorpdfstring{\protect\MakeUppercase{#2}}{#2}}}
 }
 %\let\realsection\section
 %\renewcommand{\section}[2][uppercase]
